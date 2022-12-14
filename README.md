@@ -1,4 +1,4 @@
-# Temporary MFA Code Generator
+# Temporary TOTP Code Generator
 
 This is a tiny, simple TOTP authentication code generator.  It stores nothing, and
 transmits nothing.  No cookies, no cloud, just HTML and JavaScript in the browser.
