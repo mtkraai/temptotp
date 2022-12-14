@@ -1,3 +1,7 @@
+/**
+ * Copyright 2022 Matt Kraai
+ * Distributed under the BSD License
+ */
 TOTP = function() {
 
     var dec2hex = function(s) {
