@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Temporary MFA Code Generator</title>
+        <script src="sha.js"></script>
+        <script src="totp.js"></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+      <h1>Temporary MFA Code Generator</h1>
+      <table>
+        <tr>
+          <th>Secret Key:</th>
+          <td>
+            <input type="password" size="64" id="secret" class="totp" name="Secret" value="" spellcheck="false" autocomplete="off">
+            <button id="copySecret">Copy Secret</button>
+          </td>
+        </tr>
+        <tr>
+          <th>Code:</th>
+          <td>
+            <input type="text" size="10" id="mfacode" class="totp" name="MFA Code" value="" spellcheck="false" autocomplete="off">
+            <span id="countdown">00</span>
+            <button id="copyCode">Copy Code</button>
+          </td>
+        </tr>
+      </table>
+      <script>
+        document.getElementById('secret').value = "";
+        document.getElementById('mfacode').value = "";
+        var lastCode = "";
+        function updateCode() {
+          var secret = document.getElementById('secret').value;
+          var mfaCode;
+          if (secret.length > 0) {
+            var totpObj = new TOTP();
+            mfaCode = totpObj.getOTP(secret);
+            var secRemain = 30 - Math.floor(Math.round(new Date().getTime() / 1000.0) % 30);
+            document.getElementById('countdown').innerText = String(secRemain).padStart(2, '0');
+          } else {
+            mfaCode = "";
+          }
+          if (mfaCode != lastCode) {
+            document.getElementById('mfacode').value = mfaCode;
+            lastCode = mfaCode;
+          }
+        }
+        var copyCodeBtn = document.getElementById('copyCode');
+        copyCodeBtn.addEventListener('click', function(event) {
+          var copyTextarea = document.getElementById('mfacode');
+          copyTextarea.focus();
+          copyTextarea.select();
+
+          try {
+            var successful = document.execCommand('copy');
+            var msg = successful ? 'successful' : 'unsuccessful';
+            console.log('Copying text command was ' + msg);
+          } catch (err) {
+            console.log('Oops, unable to copy');
+          }
+          copyTextarea.setSelectionRange(0,0);
+          document.getElementById('copyCode').focus();
+        });
+        var copySecretBtn = document.getElementById('copySecret');
+        copySecretBtn.addEventListener('click', function(event) {
+          var copyTextarea = document.getElementById('secret');
+          copyTextarea.type = 'text';
+          copyTextarea.focus();
+          copyTextarea.select();
+
+          try {
+            var successful = document.execCommand('copy');
+            var msg = successful ? 'successful' : 'unsuccessful';
+            console.log('Copying text command was ' + msg);
+          } catch (err) {
+            console.log('Oops, unable to copy');
+          }
+          copyTextarea.setSelectionRange(0,0);
+          copyTextarea.type = 'password';
+          document.getElementById('copySecret').focus();
+        });
+        setInterval(updateCode, 1000);
+      </script>
+    </body>
+</html>
